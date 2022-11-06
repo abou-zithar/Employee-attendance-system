@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="33.077" height="32.077" viewBox="0 0 33.077 32.077">
+  <g id="Group_2214" data-name="Group 2214" transform="translate(0.5 0.5)">
+    <path id="Path_68511" data-name="Path 68511" d="M0,0V10.125H6.75" transform="translate(9.486 21.966) rotate(-132)" fill="none" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.25"/>
+    <g id="Layer_2" data-name="Layer 2" transform="translate(0 0)">
+      <g id="Layer_1" data-name="Layer 1">
+        <path id="Path_68508" data-name="Path 68508" d="M14.639,29.167A13.7,13.7,0,1,1,29.15,14.342a.9.9,0,0,0,.9.825h0a.909.909,0,0,0,.908-.99,15.514,15.514,0,1,0-16.448,16.8.909.909,0,0,0,.964-.908h0A.9.9,0,0,0,14.639,29.167Z" transform="translate(0.01 0.019)" stroke="#000" stroke-width="1"/>
+      </g>
+    </g>
+    <g id="x" transform="translate(20 19)">
+      <path id="Path_68512" data-name="Path 68512" d="M20.778,9.219a.75.75,0,0,1,0,1.062l-10.5,10.5a.751.751,0,0,1-1.062-1.062l10.5-10.5a.75.75,0,0,1,1.062,0Z" transform="translate(-8.998 -8.998)" stroke="#000" stroke-width="1" fill-rule="evenodd"/>
+      <path id="Path_68513" data-name="Path 68513" d="M9.219,9.219a.75.75,0,0,0,0,1.062l10.5,10.5a.751.751,0,0,0,1.062-1.062l-10.5-10.5a.75.75,0,0,0-1.062,0Z" transform="translate(-8.998 -8.998)" stroke="#000" stroke-width="1" fill-rule="evenodd"/>
+    </g>
+  </g>
+</svg>
