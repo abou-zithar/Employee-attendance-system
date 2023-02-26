@@ -1,15 +1,18 @@
 // ignore_for_file: prefer_const_constructors, use_key_in_widget_constructors, avoid_print
 
 import 'dart:convert';
-
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../constant/Constants.dart';
+
 class Login extends StatefulWidget {
   // render
   @override
+  // ignore: library_private_types_in_public_api
   _LoginState createState() => _LoginState();
 }
 
@@ -28,23 +31,23 @@ class _LoginState extends State<Login> {
   @override
   Widget build(BuildContext context) {
     // create instance from Provider Type.
-    final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+    // final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
     return Scaffold(
-      body: Container(
-        constraints: BoxConstraints.expand(),
-        decoration: BoxDecoration(
-            image: DecorationImage(
-                image: AssetImage('assets/images/background.png'),
-                fit: BoxFit.fill)),
+      body: Center(
         child: Container(
+          constraints: BoxConstraints.expand(),
+          decoration: BoxDecoration(
+              image: DecorationImage(
+                  image: AssetImage('assets/images/background.png'),
+                  fit: BoxFit.fill)),
           child: SingleChildScrollView(
             child: Form(
               key: formKey,
               autovalidateMode: _autoValidate,
               child: Column(
                 children: <Widget>[
-                  SizedBox(height: 20),
-                  Container(
+                  SizedBox(height: 150),
+                  SizedBox(
                     width: 150,
                     height: 150,
                     child: Image.asset(
@@ -55,6 +58,7 @@ class _LoginState extends State<Login> {
                   _emailField(),
                   SizedBox(height: 10),
                   _passwordField(),
+                  SizedBox(height: 30),
                   _button()
                 ],
               ),
@@ -75,7 +79,7 @@ class _LoginState extends State<Login> {
           style: TextStyle(fontSize: 18.0, color: Colors.black),
           keyboardType: TextInputType.emailAddress,
           decoration: InputDecoration(
-              hintText: 'Email',
+              hintText: 'email_label'.tr(),
               hintStyle: TextStyle(fontSize: 16.0, color: Colors.grey),
               border: OutlineInputBorder(),
               prefixIcon: Icon(Icons.mail)),
@@ -109,7 +113,7 @@ class _LoginState extends State<Login> {
             keyboardType: TextInputType.emailAddress,
             obscureText: true,
             decoration: InputDecoration(
-              hintText: 'Password',
+              hintText: 'password_label'.tr(),
               hintStyle: TextStyle(fontSize: 16.0, color: Colors.grey),
               border: OutlineInputBorder(),
               prefixIcon: Icon(Icons.lock),
@@ -146,8 +150,8 @@ class _LoginState extends State<Login> {
             width: double.infinity,
             height: 50,
             alignment: Alignment.center,
-            child: const Text(
-              'Login',
+            child: Text(
+              'login_label'.tr(),
               // ignore: unnecessary_const
               style: const TextStyle(
                   fontSize: 18,
@@ -177,15 +181,14 @@ class _LoginState extends State<Login> {
   }
 
   validationRequest() async {
-    print(_token);
     var headers = {
       'accept': '*/*',
       'Authorization': "bearer $_token",
       'Content-Type': 'application/json'
     };
 
-    var request = http.Request('POST',
-        Uri.parse('http://13.79.147.127/EAT/API/api/Authenticate/Login'));
+    var request =
+        http.Request('POST', Uri.parse('$URL_Domin/Authenticate/Login'));
     request.body = json.encode({
       "userName": emailController.text,
       "password": passwordController.text

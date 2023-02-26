@@ -8,6 +8,8 @@ import 'package:http/http.dart' as http;
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../constant/Constants.dart';
+
 String finalEmail = "";
 String finalPassword = "";
 
@@ -96,16 +98,17 @@ class _SplashScreenState extends State<SplashScreen> {
       finalEmail = optainedEmail;
       finalPassword = optainedPassword;
     });
-    print(finalEmail + " " + finalPassword);
+    // print(finalEmail + " " + finalPassword);
   }
 
   _authAPI() async {
     var headers = {'accept': '*/*', 'Content-Type': 'application/json'};
-    var request = http.Request('POST',
-        Uri.parse('http://13.79.147.127/EAT/API/api/Authenticate/GetToken'));
+    var request =
+        http.Request('POST', Uri.parse('$URL_Domin/Authenticate/GetToken'));
     request.body = json.encode({
       "clientID": "Eat_Client",
       "key": "zg/sl5QzGQD0CivStTW1Yfe66d6TgY3tbz/sm/q46c4="
+      //where do we got the key from
     });
     request.headers.addAll(headers);
 
@@ -116,10 +119,11 @@ class _SplashScreenState extends State<SplashScreen> {
     print(decodedMap['token']);
 
     if (response.statusCode == 200) {
-      print(decodedMap['token']);
+      print("the token arrived successfully");
 
       SharedPreferences prefs = await SharedPreferences.getInstance();
-      prefs.setString("token", decodedMap['token']);
+
+      print(prefs.setString("token", decodedMap['token']));
     } else {
       print(response.reasonPhrase);
     }
