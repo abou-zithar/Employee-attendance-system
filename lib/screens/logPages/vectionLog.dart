@@ -2,7 +2,6 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'dart:convert';
-import 'package:flutter_expandable_fab/flutter_expandable_fab.dart';
 
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:http/http.dart' as http;
@@ -31,21 +30,27 @@ class _VecationLogScreenState extends State<VecationLogScreen> {
   }
 
   Widget createCard(data) {
-    final lconsList = [
+    const lconsList = [
       Icon(
-        Icons.sunny,
+        FontAwesomeIcons.n,
+        color: Colors.grey,
+      ),
+      Icon(
+        FontAwesomeIcons.check,
         color: Colors.green,
       ),
       Icon(
-        Icons.sick,
+        FontAwesomeIcons.xmark,
         color: Colors.red,
       )
     ];
     var iconIndex = 0;
-    if (data["vaction"] == "Sick Leave") {
+    if (data["status"] == "New") {
+      iconIndex = 0;
+    } else if (data["status"] == "Approved") {
       iconIndex = 1;
     } else {
-      iconIndex = 0;
+      iconIndex = 2;
     }
     String days = "Days_label".tr();
     String from = "From_label".tr();
@@ -87,7 +92,7 @@ class _VecationLogScreenState extends State<VecationLogScreen> {
     if (response.statusCode == 200) {
       setState(() {
         data = json.decode(response.body);
-        // print(data);
+        print(data);
         // String data_string = json.encode(data["clocks"]);
         // prefs.setString("history_of_use_vecations", data_string);
 
@@ -109,16 +114,16 @@ class _VecationLogScreenState extends State<VecationLogScreen> {
       return Scaffold(
         body: Column(
           children: [
-            Padding(
-              padding: const EdgeInsets.all(20.0),
-              child: Text(
-                "Log_vecation_header".tr(),
-                style: const TextStyle(
-                    fontSize: 32,
-                    fontWeight: FontWeight.w500,
-                    color: Color(0xFF1C325E)),
-              ),
-            ),
+            // Padding(
+            //   padding: const EdgeInsets.all(20.0),
+            //   child: Text(
+            //     "Log_vecation_header".tr(),
+            //     style: const TextStyle(
+            //         fontSize: 32,
+            //         fontWeight: FontWeight.w500,
+            //         color: Color(0xFF1C325E)),
+            //   ),
+            // ),
             Expanded(
               child: Container(
                 child: ListView.builder(

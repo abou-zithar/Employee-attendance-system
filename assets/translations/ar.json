@@ -46,7 +46,11 @@
     "Log_main_header":"سجل الموظف",
     "Log_vecation_header":"سجل الاجازات ",
     "Log_mission_header":"سجل المهام",
-    "Log_excuse_header":"سجل الاعذار "
+    "Log_excuse_header":"سجل الاعذار ",
+    "still_there_btn":"مازلت هناك",
+    "still_there_question":"هل مازلت هناك؟",
+    "still_there_description":"يجب عليك النقر علي الاشعار",
+    "still_there_description2":"انقر علي الزر بالاسفل لنتحقق من موقعك"
 
     
     

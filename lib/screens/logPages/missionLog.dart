@@ -2,7 +2,6 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'dart:convert';
-import 'package:flutter_expandable_fab/flutter_expandable_fab.dart';
 
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:http/http.dart' as http;
@@ -31,34 +30,27 @@ class _MissionLogScreenState extends State<MissionLogScreen> {
   }
 
   Widget createCard(data) {
-    final lconsList = [
+    const lconsList = [
       Icon(
-        FontAwesomeIcons.car,
+        FontAwesomeIcons.n,
+        color: Colors.grey,
+      ),
+      Icon(
+        FontAwesomeIcons.check,
         color: Colors.green,
       ),
       Icon(
-        FontAwesomeIcons.bus,
+        FontAwesomeIcons.xmark,
         color: Colors.red,
-      ),
-      Icon(
-        Icons.pedal_bike,
-        color: Colors.blue,
-      ),
-      Icon(
-        FontAwesomeIcons.plane,
-        color: Colors.purple,
       )
     ];
-
-    var iconsindex = 0;
-    if (data["transportation"] == "bus") {
-      iconsindex = 1;
-    } else if (data["transportation"] == "car") {
-      iconsindex = 0;
-    } else if (data["transportation"] == "bike") {
-      iconsindex = 2;
-    } else if (data["transportation"] == "plane") {
-      iconsindex = 3;
+    var iconIndex = 0;
+    if (data["status"] == "New") {
+      iconIndex = 0;
+    } else if (data["status"] == "Approved") {
+      iconIndex = 1;
+    } else {
+      iconIndex = 2;
     }
 
     String date = "Date_label".tr();
@@ -68,7 +60,7 @@ class _MissionLogScreenState extends State<MissionLogScreen> {
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
           ListTile(
-            leading: lconsList[iconsindex],
+            leading: lconsList[iconIndex],
             title: Text('${data["message"]}'),
             subtitle: Text(
                 'from : ${data["from_Location"]} to : ${data["to_Location"]}'),
@@ -124,16 +116,16 @@ class _MissionLogScreenState extends State<MissionLogScreen> {
       return Scaffold(
         body: Column(
           children: [
-            Padding(
-              padding: const EdgeInsets.all(12.0),
-              child: Text(
-                "Log_mission_header".tr(),
-                style: const TextStyle(
-                    fontSize: 32,
-                    fontWeight: FontWeight.w500,
-                    color: Color(0xFF1C325E)),
-              ),
-            ),
+            // Padding(
+            //   padding: const EdgeInsets.all(12.0),
+            //   child: Text(
+            //     "Log_mission_header".tr(),
+            //     style: const TextStyle(
+            //         fontSize: 32,
+            //         fontWeight: FontWeight.w500,
+            //         color: Color(0xFF1C325E)),
+            //   ),
+            // ),
             Expanded(
               child: Container(
                 child: ListView.builder(

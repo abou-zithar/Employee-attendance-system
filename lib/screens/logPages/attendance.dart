@@ -1,7 +1,3 @@
-import 'package:demo/screens/logPages/ExcuseLog.dart';
-import 'package:demo/screens/logPages/attendance.dart';
-import 'package:demo/screens/logPages/missionLog.dart';
-import 'package:demo/screens/logPages/vectionLog.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'dart:convert';
@@ -11,14 +7,15 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../constant/Constants.dart';
 
-class LogScreen extends StatefulWidget {
-  const LogScreen({Key? key}) : super(key: key);
+class Attendance extends StatefulWidget {
+  const Attendance({Key? key}) : super(key: key);
 
   @override
-  State<LogScreen> createState() => _LogScreenState();
+  State<Attendance> createState() => _AttendanceState();
 }
 
-class _LogScreenState extends State<LogScreen> {
+class _AttendanceState extends State<Attendance> {
+  @override
   String token = "";
   String userID = "";
   var data;
@@ -31,7 +28,7 @@ class _LogScreenState extends State<LogScreen> {
   }
 
   Widget createCard(data) {
-    final lconsList = [
+    const lconsList = [
       Icon(
         Icons.alarm,
         color: Colors.green,
@@ -50,7 +47,7 @@ class _LogScreenState extends State<LogScreen> {
       ),
       Icon(
         FontAwesomeIcons.question,
-        color: Colors.red,
+        color: Colors.blue,
       ),
     ];
 
@@ -118,68 +115,67 @@ class _LogScreenState extends State<LogScreen> {
     }
   }
 
-  @override
   Widget build(BuildContext context) {
     var lastDate = "";
-
-    // print(data);
     if (data == null) {
       return Center(child: CircularProgressIndicator());
     } else {
-      return DefaultTabController(
-        length: 4,
-        child: Scaffold(
-          appBar: AppBar(
-            automaticallyImplyLeading: false,
-            backgroundColor: Color.fromARGB(255, 255, 255, 255),
-            title: TabBar(
-              padding: EdgeInsets.symmetric(horizontal: 2),
-              indicatorColor: const Color.fromRGBO(0, 158, 247, 1),
-              splashFactory: InkSparkle.splashFactory,
-              tabs: [
-                const Tab(
-                    icon: Icon(
-                  Icons.history,
-                  color: Color.fromRGBO(0, 158, 247, 1),
-                )),
-                Tab(
-                    child: Text(
-                  "Log_mission_header".tr(),
-                  style: const TextStyle(
-                      color: Color.fromRGBO(0, 158, 247, 1), fontSize: 12),
-                )),
-                Tab(
-                    child: Text(
-                  "Log_excuse_header".tr(),
-                  style: const TextStyle(
-                      color: Color.fromRGBO(0, 158, 247, 1), fontSize: 13),
-                )),
-                Tab(
-                  child: Text(
-                    "Log_vecation_header".tr(),
-                    style: const TextStyle(
-                        color: Color.fromRGBO(0, 158, 247, 1), fontSize: 12),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          body: Column(
-            children: [
-              Expanded(
-                child: TabBarView(physics: BouncingScrollPhysics(), children: [
-                  Attendance(),
-                  Container(
-                    child: MissionLogScreen(),
-                  ),
-                  Container(child: ExcuseLogScreen()),
-                  Container(
-                    child: VecationLogScreen(),
-                  ),
-                ]),
+      return Container(
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: Text(
+                "Log_main_header".tr(),
+                style: const TextStyle(
+                    fontSize: 32,
+                    fontWeight: FontWeight.w500,
+                    color: Color(0xFF1C325E)),
               ),
-            ],
-          ),
+            ),
+            Expanded(
+              child: Container(
+                child: ListView.builder(
+                  shrinkWrap: true,
+                  itemBuilder: (context, index) {
+                    if (data["clocks"][index]["checkDate"]
+                            .toString()
+                            .split("T")[0] ==
+                        lastDate) {
+                      return createCard(data["clocks"][index]);
+                    } else {
+                      lastDate = data["clocks"][index]["checkDate"]
+                          .toString()
+                          .split("T")[0];
+                      return Column(children: [
+                        Card(
+                          child: Text(
+                            data["clocks"][index]["checkDate"]
+                                .toString()
+                                .split("T")[0],
+                            style: const TextStyle(
+                              color: Colors.blue,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 30,
+                              // shadows: [
+                              //   Shadow(
+                              //     blurRadius: 40.0,
+                              //     color: Colors.grey,
+                              //     offset: Offset(5.0, 5.0),
+                              //   ),
+                              // ],
+                            ),
+                          ),
+                        ),
+                        createCard(data["clocks"][index])
+                      ]);
+                    }
+                  },
+                  itemCount: data["clocks"].length,
+                ),
+              ),
+            ),
+          ],
         ),
       );
     }

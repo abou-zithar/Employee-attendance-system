@@ -1,18 +1,44 @@
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:easy_localization/easy_localization.dart';
 
-Future<void> createNormalNotification() async {
+Future<void> createNormalNotification(stillThereDuration) async {
+  // print(DateTime.daysPerWeek);
+  final still_there_question = "still_there_question".tr();
   await AwesomeNotifications().createNotification(
+    actionButtons: [
+      NotificationActionButton(
+          key: "Still_There", label: "still_there_btn".tr())
+    ],
     content: NotificationContent(
       id: 0,
-      channelKey: "basic_channel",
-      title: '${Emojis.symbols_warning} Are you still there?',
-      body: "You should respond by Checking in again.",
+      channelKey: "Still_there_channel",
+      title: '${Emojis.symbols_red_question_mark} $still_there_question',
+      body: "still_there_description".tr(),
       wakeUpScreen: true,
     ),
   );
 }
 
+Future<void> createBasicNotifcation(NotificationSchedule not) async {
+  await AwesomeNotifications().createNotification(
+    schedule: NotificationCalendar(
+      repeats: true,
+      allowWhileIdle: true,
+      weekday: DateTime.wednesday,
+      hour: 10,
+      minute: 28,
+      second: 0,
+      millisecond: 0,
+    ),
+    content: NotificationContent(
+      id: 10,
+      channelKey: "Basic_channel",
+      title: '${Emojis.smile_alien}Check you Application',
+      body: "there is an actions in your Eat app",
+      wakeUpScreen: true,
+    ),
+  );
+}
 
 
 

@@ -209,6 +209,7 @@ class _LoginState extends State<Login> {
         prefs.setString("password", passwordController.text);
         prefs.setString("userID", decodedMap['userID']);
         prefs.setString("userName", decodedMap['name']);
+        prefs.setInt("StillThereDuration", decodedMap['stillThereDuration']);
         Navigator.pushReplacementNamed(context, '/nav');
       } else {
         Fluttertoast.showToast(

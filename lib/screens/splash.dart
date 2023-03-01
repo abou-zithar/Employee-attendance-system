@@ -123,7 +123,7 @@ class _SplashScreenState extends State<SplashScreen> {
 
       SharedPreferences prefs = await SharedPreferences.getInstance();
 
-      print(prefs.setString("token", decodedMap['token']));
+      prefs.setString("token", decodedMap['token']);
     } else {
       print(response.reasonPhrase);
     }

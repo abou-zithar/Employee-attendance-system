@@ -43,10 +43,14 @@
     "Days_label":"Days",
     "From_label":"From",
     "Date_label":"Date",
-    "Log_main_header":"Employee Logs",
-    "Log_vecation_header":"Vacations Log",
-    "Log_mission_header":"Missions Log",
-    "Log_excuse_header":"Excuse Log"
+    "Log_main_header":"Attendance",
+    "Log_vecation_header":"Vacation",
+    "Log_mission_header":"Mission",
+    "Log_excuse_header":"Excuse",
+    "still_there_btn":"Still There",
+    "still_there_question":"Are you still there?",
+    "still_there_description":"you should click on the notificatoin.",
+    "still_there_description2":"click the button below to check that you are 'Still there'"
 
     
     

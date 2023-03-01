@@ -9,10 +9,18 @@ void main() async {
   await EasyLocalization.ensureInitialized();
   AwesomeNotifications().initialize(null, [
     NotificationChannel(
-        channelKey: "basic_channel",
+        channelKey: "Still_there_channel",
+        channelName: "Still_there Notification",
+        channelDescription: "the Still_there natifaction ",
+        importance: NotificationImportance.Max,
+        defaultColor: Colors.blue,
+        channelShowBadge: true,
+        locked: true),
+    NotificationChannel(
+        channelKey: "Basic_channel",
         channelName: "Basic Notification",
         channelDescription: "the normal natifaction ",
-        importance: NotificationImportance.Max,
+        importance: NotificationImportance.High,
         defaultColor: Colors.blue,
         channelShowBadge: true)
   ]);

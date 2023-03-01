@@ -14,6 +14,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'navigation_drawer.dart';
 
 int myIndex = 0;
+int requestindex = 0;
 
 class BottomBar extends StatefulWidget {
   const BottomBar({
@@ -31,6 +32,71 @@ class _BottomBarState extends State<BottomBar> {
     const RequestScreen(),
     const LogScreen(),
   ];
+
+  // @override
+  // void initState() {
+  //   AwesomeNotifications().isNotificationAllowed().then((isAllowed) {
+  //     if (!isAllowed) {
+  //       showDialog(
+  //         context: context,
+  //         builder: (context) => AlertDialog(
+  //           title: Text("Allow Natifications"),
+  //           content: Text("Our app would like to send you natifications"),
+  //           actions: [
+  //             TextButton(
+  //                 onPressed: () {
+  //                   Navigator.pop(context);
+  //                 },
+  //                 child: Text(
+  //                   "Don't Allow",
+  //                   style: TextStyle(color: Colors.grey, fontSize: 18),
+  //                 )),
+  //             TextButton(
+  //                 onPressed: () {
+  //                   AwesomeNotifications()
+  //                       .requestPermissionToSendNotifications()
+  //                       .then((value) => Navigator.pop(context));
+  //                 },
+  //                 child: Text(
+  //                   "Allow",
+  //                   style: TextStyle(
+  //                       color: Colors.teal,
+  //                       fontSize: 18,
+  //                       fontWeight: FontWeight.bold),
+  //                 ))
+  //           ],
+  //         ),
+  //       );
+  //     }
+  //   });
+  //   final awesomeCreateStream =
+  //       AwesomeNotifications().createdStream.asBroadcastStream(
+  //     onCancel: (controller) {
+  //       print('Stream paused');
+  //       controller.pause();
+  //     },
+  //     onListen: (controller) async {
+  //       print('Stream resumed');
+  //       if (controller.isPaused) {
+  //         controller.resume();
+  //       }
+  //     },
+  //   );
+
+  //   final awesomeCreateListener = awesomeCreateStream.listen(
+  //       (notification) {
+  //         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+  //             content:
+  //                 Text("Notification Created on ${notification.channelKey}")));
+  //       },
+  //       cancelOnError: true,
+  //       onError: (notification) {
+  //         ScaffoldMessenger.of(context)
+  //             .showSnackBar(SnackBar(content: Text("try agian}")));
+  //       });
+  //   // TODO: implement initState
+  //   super.initState();
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -74,7 +140,12 @@ class _BottomBarState extends State<BottomBar> {
           });
         },
       ),
-      body: screens[myIndex],
+      body:
+          // screens[myIndex]
+          IndexedStack(
+        index: myIndex,
+        children: screens,
+      ),
     );
   }
 }

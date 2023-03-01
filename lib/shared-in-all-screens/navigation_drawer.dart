@@ -143,8 +143,8 @@ class _Navigation_DrawerState extends State<Navigation_Drawer> {
           leading: const Icon(FontAwesomeIcons.circleInfo),
           title: Text("about_app_label".tr()),
           onTap: () {
-            createNormalNotification();
-            // Navigator.pushReplacementNamed(context, '/About');
+            // createNormalNotification();
+            Navigator.pushReplacementNamed(context, '/About');
           },
         ),
         const Divider(color: Colors.black54),

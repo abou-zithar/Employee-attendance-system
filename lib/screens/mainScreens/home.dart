@@ -3,7 +3,6 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
-import 'dart:io' show Platform;
 
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -16,7 +15,6 @@ import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:http/http.dart' as http;
-import 'package:intl/intl.dart';
 
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -44,6 +42,7 @@ class _HomeScreenState extends State<HomeScreen> {
   String? token;
   String? userID;
   String? checkInID;
+  int? stillThereDuration;
   String userName = "";
   int? type;
   int? lastType;
@@ -66,6 +65,107 @@ class _HomeScreenState extends State<HomeScreen> {
   late Timer timer;
   bool started = false;
   bool checkedIn = false;
+  StreamSubscription<ReceivedAction>? _actionStreamSubscription;
+  static final awesomeActionStream =
+      AwesomeNotifications().actionStream.asBroadcastStream(
+    onCancel: (controller) {
+      // controller.resume();
+
+      print(controller.isPaused);
+    },
+    onListen: (controller) async {
+      print('Stream resumed');
+      if (controller.isPaused) {
+        controller.resume();
+      }
+    },
+  );
+
+  // void listen() {
+  //   if (!flagStream) {
+  //     flagStream = true;
+
+  //     awesomeActionStream.listen((event) {
+  //       if (event.channelKey == "Still_there_channel" && Platform.isIOS) {
+  //         AwesomeNotifications().getGlobalBadgeCounter().then((value) {
+  //           AwesomeNotifications().setGlobalBadgeCounter(value - 1);
+  //         });
+  //       }
+
+  //       showDialog<void>(
+  //         barrierDismissible: false,
+  //         context: context,
+  //         builder: (BuildContext context) {
+  //           return AlertDialog(
+  //             title: const Text('Still There '),
+  //             content: Text(
+  //                 "click the button below to check that you are 'Still there'"),
+  //             actions: [
+  //               TextButton(
+  //                   onPressed: () async {
+  //                     await getCurentAddress();
+  //                     final dynamic checkingImage = await _openCamera();
+  //                     Navigator.pop(context);
+  //                     if (checkingImage == null) {
+  //                     } else {
+  //                       print('Still there Image is :$checkingImage');
+  //                       setState(() {
+  //                         type = 5;
+  //                         checkInID = "";
+  //                         tdata = DateTime.now();
+  //                         timeString =
+  //                             ("Still there at ${DateFormat("hh:mm a").format(DateTime.now())}");
+  //                         isVisible = true;
+  //                       });
+  //                       await clockApi();
+  //                     }
+  //                   },
+  //                   child: Text("Still there"))
+  //             ],
+  //           );
+  //         },
+  //       );
+  //     });
+  //   }
+  // }
+
+  Future<void> showDialogforStillthere() {
+    return showDialog<void>(
+      barrierDismissible: false,
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('still_there_btn'.tr()),
+          content: Text("still_there_description2".tr()),
+          actions: [
+            TextButton(
+                onPressed: () async {
+                  SharedPreferences prefs =
+                      await SharedPreferences.getInstance();
+                  await getCurentAddress();
+                  final dynamic checkingImage = await _openCamera();
+                  Navigator.pop(context);
+                  if (checkingImage == null) {
+                    prefs.setBool("StillThereFlag", false);
+                  } else {
+                    print('Still there Image is :$checkingImage');
+                    setState(() {
+                      type = 5;
+                      checkInID = "";
+                      tdata = DateTime.now();
+                      timeString =
+                          ("Still there at ${DateFormat("hh:mm a").format(DateTime.now())}");
+                      isVisible = true;
+                    });
+                    await clockApi();
+                  }
+                },
+                child: Text("still_there_btn".tr()))
+          ],
+        );
+      },
+    );
+  }
 
   @override
   void initState() {
@@ -104,6 +204,8 @@ class _HomeScreenState extends State<HomeScreen> {
         );
       }
     });
+
+    // listen();
 
     getSharedPrefs().whenComplete(() {
       if (lastType == 1) {
@@ -161,13 +263,11 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   @override
-  void dispose() {
+  void dispose() async {
     if (lastType == 1) {
       timer.cancel();
     }
-
-    AwesomeNotifications().actionSink;
-
+    // c().actionSink.close();
     super.dispose();
   }
 
@@ -230,6 +330,7 @@ class _HomeScreenState extends State<HomeScreen> {
       storedPath = prefs.getString(("storedImage"));
       startTime = (prefs.getString("startTime") ?? "");
       checkInID = (prefs.getString("checkInID") ?? "");
+      stillThereDuration = (prefs.getInt("StillThereDuration") ?? 0);
     });
   }
 
@@ -361,7 +462,9 @@ class _HomeScreenState extends State<HomeScreen> {
                   fontSize: 48,
                   fontWeight: FontWeight.w500),
             ),
-            (type == 1 || lastType == 1) ? _checkOutbutton() : _checkINbutton(),
+            (type == 1 || lastType == 1 || type == 5)
+                ? _checkOutbutton()
+                : _checkINbutton(),
             const SizedBox(
               height: 40,
             ),
@@ -418,6 +521,18 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
+  stillThereFunction(stillThereDuration) {
+    if (stillThereDuration! > 0) {
+      Future.delayed(Duration(seconds: 0, minutes: 1), () {
+        createNormalNotification(stillThereDuration);
+      });
+// put the stillThereDuration in the minures parmeter
+      Future.delayed(Duration(seconds: 1, minutes: 1), () {
+        showDialogforStillthere();
+      });
+    }
+  }
+
   void onDidReceiveLocalNotification(
       int id, String title, String body, String payload) async {
     // display a dialog with the notification details, tap ok to go to another page
@@ -449,21 +564,6 @@ class _HomeScreenState extends State<HomeScreen> {
             final dynamic checkingImage = await _openCamera();
             if (checkingImage == null) {
               createToste("take_image_order");
-              // showDialog(
-              //     context: context,
-              //     builder: (context) {
-              //       return AlertDialog(
-              //         title: Text('take_image_order'.tr()),
-              //         actions: <Widget>[
-              //           TextButton(
-              //               onPressed: () {
-              //                 Navigator.pop(context);
-              //                 // Navigator.pushReplacementNamed(context, '/nav');
-              //               },
-              //               child: Text('Okay_label'.tr()))
-              //         ],
-              //       );
-              //     });
             } else {
               print('checkingImage is :$checkingImage');
               setState(() {
@@ -474,7 +574,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     ("Checked in at ${DateFormat("hh:mm a").format(DateTime.now())}");
                 isVisible = true;
               });
-              createNormalNotification();
+              stillThereFunction(stillThereDuration);
               SharedPreferences prefs = await SharedPreferences.getInstance();
               prefs.setString("startTime", tdata.toString());
               prefs.setString("clockString", timeString);
@@ -494,6 +594,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   ("Checked in at ${DateFormat("hh:mm a").format(DateTime.now())}");
               isVisible = true;
             });
+
+            stillThereFunction(stillThereDuration);
             SharedPreferences prefs = await SharedPreferences.getInstance();
             prefs.setString("startTime", tdata.toString());
             prefs.setString("clockString", timeString);

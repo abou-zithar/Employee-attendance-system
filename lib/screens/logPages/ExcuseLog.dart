@@ -2,7 +2,6 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'dart:convert';
-import 'package:flutter_expandable_fab/flutter_expandable_fab.dart';
 
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:http/http.dart' as http;
@@ -31,22 +30,27 @@ class _ExcuseLogScreenState extends State<ExcuseLogScreen> {
   }
 
   Widget createCard(data) {
-    final lconsList = [
+    const lconsList = [
       Icon(
-        FontAwesomeIcons.personWalkingArrowLoopLeft,
+        FontAwesomeIcons.n,
+        color: Colors.grey,
+      ),
+      Icon(
+        FontAwesomeIcons.check,
         color: Colors.green,
       ),
       Icon(
-        FontAwesomeIcons.personWalkingArrowRight,
+        FontAwesomeIcons.xmark,
         color: Colors.red,
       )
     ];
-
-    var iconsindex = 0;
-    if (data["excuse"] == "Leave Early") {
-      iconsindex = 0;
+    var iconIndex = 0;
+    if (data["status"] == "New") {
+      iconIndex = 0;
+    } else if (data["status"] == "Approved") {
+      iconIndex = 1;
     } else {
-      iconsindex = 1;
+      iconIndex = 2;
     }
 
     String date = "Date_label".tr();
@@ -56,7 +60,7 @@ class _ExcuseLogScreenState extends State<ExcuseLogScreen> {
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
           ListTile(
-            leading: lconsList[iconsindex],
+            leading: lconsList[iconIndex],
             title: Text('${data["excuse"]}'.tr()),
             subtitle: Text('$date : ${data["date"].toString().split("T")[0]}'),
             trailing: Text("${data["exMessage"]}"),
@@ -111,16 +115,16 @@ class _ExcuseLogScreenState extends State<ExcuseLogScreen> {
       return Scaffold(
         body: Column(
           children: [
-            Padding(
-              padding: const EdgeInsets.all(12.0),
-              child: Text(
-                "Log_excuse_header".tr(),
-                style: const TextStyle(
-                    fontSize: 32,
-                    fontWeight: FontWeight.w500,
-                    color: Color(0xFF1C325E)),
-              ),
-            ),
+            // Padding(
+            //   padding: const EdgeInsets.all(12.0),
+            //   child: Text(
+            //     "Log_excuse_header".tr(),
+            //     style: const TextStyle(
+            //         fontSize: 32,
+            //         fontWeight: FontWeight.w500,
+            //         color: Color(0xFF1C325E)),
+            //   ),
+            // ),
             Expanded(
               child: Container(
                 child: ListView.builder(
