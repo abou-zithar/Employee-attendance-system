@@ -32,22 +32,27 @@ class _AttendanceState extends State<Attendance> {
       Icon(
         Icons.alarm,
         color: Colors.green,
+        size: 40,
       ),
       Icon(
         Icons.alarm,
         color: Colors.red,
+        size: 40,
       ),
       Icon(
         FontAwesomeIcons.mugHot,
         color: Colors.green,
+        size: 40,
       ),
       Icon(
         FontAwesomeIcons.mugHot,
         color: Colors.red,
+        size: 40,
       ),
       Icon(
         FontAwesomeIcons.question,
         color: Colors.blue,
+        size: 40,
       ),
     ];
 
@@ -65,17 +70,28 @@ class _AttendanceState extends State<Attendance> {
     } else {
       counter = 1;
     }
-    return Card(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          ListTile(
-            leading: lconsList[data["type"] - 1],
-            title: Text('${stateList[data["type"] - 1]}'),
-            subtitle: Text('${data["time"]}'),
-            // trailing: Text("$counter"),
-          ),
-        ],
+
+    final currentDate = data["checkDate"].toString().split("T")[0];
+    return Padding(
+      padding: EdgeInsets.all(5),
+      child: Card(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            ListTile(
+              leading: lconsList[data["type"] - 1],
+              title: Text(
+                '${stateList[data["type"] - 1]}',
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+              subtitle: Text('${data["time"]}'),
+              trailing: Text(
+                "$currentDate",
+                style: TextStyle(fontSize: 15),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -104,80 +120,126 @@ class _AttendanceState extends State<Attendance> {
         data = json.decode(response.body);
         print(data);
         String data_string = json.encode(data["clocks"]);
-        // prefs.setString("history_of_user", data_string);
-
-        // print(data["clocks"][0]["checkDate"].toString().split("T")[0]);
       });
-
-      // print();
     } else {
       print(response.reasonPhrase);
     }
   }
 
   Widget build(BuildContext context) {
-    var lastDate = "";
+    String getMonth(int monthNumber) {
+      late String month;
+      switch (monthNumber) {
+        case 01:
+          month = "January";
+          break;
+        case 02:
+          month = "February";
+          break;
+        case 03:
+          month = "March";
+          break;
+        case 04:
+          month = "April";
+          break;
+        case 05:
+          month = "May";
+          break;
+        case 06:
+          month = "June";
+          break;
+        case 07:
+          month = "July";
+          break;
+        case 08:
+          month = "August";
+          break;
+        case 09:
+          month = "September";
+          break;
+        case 10:
+          month = "October";
+          break;
+        case 11:
+          month = "November";
+          break;
+        case 12:
+          month = "December";
+          break;
+      }
+      return month;
+    }
+
+    dynamic lastDate = "";
     if (data == null) {
       return Center(child: CircularProgressIndicator());
     } else {
-      return Container(
-        child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(10.0),
-              child: Text(
-                "Log_main_header".tr(),
-                style: const TextStyle(
-                    fontSize: 32,
-                    fontWeight: FontWeight.w500,
-                    color: Color(0xFF1C325E)),
-              ),
-            ),
-            Expanded(
-              child: Container(
-                child: ListView.builder(
-                  shrinkWrap: true,
-                  itemBuilder: (context, index) {
-                    if (data["clocks"][index]["checkDate"]
-                            .toString()
-                            .split("T")[0] ==
-                        lastDate) {
-                      return createCard(data["clocks"][index]);
-                    } else {
-                      lastDate = data["clocks"][index]["checkDate"]
-                          .toString()
-                          .split("T")[0];
-                      return Column(children: [
-                        Card(
-                          child: Text(
-                            data["clocks"][index]["checkDate"]
-                                .toString()
-                                .split("T")[0],
-                            style: const TextStyle(
-                              color: Colors.blue,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 30,
-                              // shadows: [
-                              //   Shadow(
-                              //     blurRadius: 40.0,
-                              //     color: Colors.grey,
-                              //     offset: Offset(5.0, 5.0),
-                              //   ),
-                              // ],
-                            ),
-                          ),
-                        ),
-                        createCard(data["clocks"][index])
-                      ]);
-                    }
-                  },
-                  itemCount: data["clocks"].length,
+      if (data["clocks"] == null) {
+        return Center(
+            child: Text("No Data",
+                style: TextStyle(
+                    color: Theme.of(context).primaryColor,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 40)));
+      } else {
+        return Container(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(top: 20, bottom: 10, left: 20),
+                child: Text(
+                  "Log_main_header".tr(),
+                  style: const TextStyle(
+                      fontSize: 32,
+                      fontWeight: FontWeight.w500,
+                      color: Color(0xFF1C325E)),
                 ),
               ),
-            ),
-          ],
-        ),
-      );
+              Expanded(
+                child: Container(
+                  child: ListView.builder(
+                    shrinkWrap: true,
+                    itemBuilder: (context, index) {
+                      var currentDate = data["clocks"][index]["checkDate"]
+                          .toString()
+                          .split("T")[0];
+
+                      var month =
+                          getMonth(int.parse(currentDate.split("-")[1]));
+                      print(month);
+                      if (month == lastDate) {
+                        return createCard(data["clocks"][index]);
+                      } else {
+                        lastDate = month;
+                        return Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Padding(
+                                padding:
+                                    const EdgeInsets.only(bottom: 10, left: 20),
+                                child: Text(
+                                  "${month} ${currentDate.split("-")[0]}",
+                                  textAlign: TextAlign.start,
+                                  style: const TextStyle(
+                                    color: Color(0xFF1C325E),
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 30,
+                                  ),
+                                ),
+                              ),
+                              createCard(data["clocks"][index])
+                            ]);
+                      }
+                    },
+                    itemCount: data["clocks"].length,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      }
     }
   }
 }

@@ -22,13 +22,17 @@ class BreakScreen extends StatefulWidget {
 }
 
 class _BreakScreenState extends State<BreakScreen> {
+  // the vriablethat i will work with
   @override
+// variable of images and location
   File? imageFile;
   String? encodedImage;
   String? curentAddress;
   var curentPos;
   String? curentLat;
   String? curentLong;
+
+  // the id ,token type of state the user are at
   String? token;
   String? userID;
   String? checkInID;
@@ -37,6 +41,7 @@ class _BreakScreenState extends State<BreakScreen> {
   int? lastType;
   int? breakId;
   String? ipAdd;
+  //variable to control the clock
   int myIndex = 0;
   DateTime? tdataB;
   DateTime? startSessionB;
@@ -52,8 +57,11 @@ class _BreakScreenState extends State<BreakScreen> {
   @override
   void initState() {
     super.initState();
+    // first we get the variable that stored in the chach
     getSharedPrefs().whenComplete(() {
+      // if we are at the break in state
       if (breakId == 3) {
+// to get the current time and disply it in the main screen
         DateTime endTime = DateTime.now();
         startSessionB = DateTime.parse(startTimeB);
         Duration difference = endTime.difference(startSessionB!);
@@ -64,7 +72,7 @@ class _BreakScreenState extends State<BreakScreen> {
         digitalSeconds = (sseconds >= 10) ? "$sseconds" : "0$sseconds";
         digitalMinutes = (sminutes >= 10) ? "$sminutes" : "0$sminutes";
         digitalHours = (shours >= 10) ? "$shours" : "0$shours";
-
+// and this below to increament the clock each one second
         timer = Timer.periodic(const Duration(seconds: 1), (timer) {
           sseconds = sseconds + 1;
           sminutes = sminutes;
@@ -104,7 +112,8 @@ class _BreakScreenState extends State<BreakScreen> {
     super.dispose();
   }
 
-  reset() {
+//function to reset the timer to zerooooos
+  void reset() {
     timer.cancel();
     setState(() {
       seconds = 0;
@@ -118,6 +127,7 @@ class _BreakScreenState extends State<BreakScreen> {
     });
   }
 
+// function to start the timer
   void start() {
     started = true;
     timer = Timer.periodic(const Duration(seconds: 1), (timer) {
@@ -145,6 +155,7 @@ class _BreakScreenState extends State<BreakScreen> {
     });
   }
 
+// the function reposiable to open the camera and decompress the image to be easier to send it to the api
   _openCamera() async {
     final image = await ImagePicker().pickImage(
         source: ImageSource.camera,
@@ -167,6 +178,7 @@ class _BreakScreenState extends State<BreakScreen> {
     return imageFile;
   }
 
+// the function that reposianble of get the current loction of the mobile
   getCurentLocation() async {
     LocationPermission permission;
     permission = await Geolocator.requestPermission();
@@ -182,6 +194,7 @@ class _BreakScreenState extends State<BreakScreen> {
     });
   }
 
+//here we translate the location we get to and understandable address
   getCurentAddress() async {
     await getCurentLocation();
     List<Placemark> placemarks =
@@ -195,6 +208,7 @@ class _BreakScreenState extends State<BreakScreen> {
     }
   }
 
+//this toste display when the user try to not take the image in both break in , out
   createToste(massage) {
     return Fluttertoast.showToast(
         msg: "$massage".tr(),
@@ -205,6 +219,7 @@ class _BreakScreenState extends State<BreakScreen> {
         textColor: Colors.black,
         fontSize: 16.0);
   }
+  // here is the main screen where we put our widgets
 
   @override
   Widget build(BuildContext context) {
@@ -240,6 +255,8 @@ class _BreakScreenState extends State<BreakScreen> {
     );
   }
 
+  // this function to get the variables from the cache
+
   Future getSharedPrefs() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
@@ -262,6 +279,7 @@ class _BreakScreenState extends State<BreakScreen> {
     }
   }
 
+// the clockapi is the request that handel the back end and send the state of the app where it is check in , out or break in , out or still there
   clockApi() async {
     var headers = {
       'accept': '*/*',
@@ -294,61 +312,53 @@ class _BreakScreenState extends State<BreakScreen> {
     }
   }
 
+// the button of break in
   Widget _breakIN() {
     return Padding(
       padding: const EdgeInsets.only(top: 40),
       child: ElevatedButton(
-        onPressed: () async {
-          if (Platform.isAndroid) {
-            if (lastType == 1) {
-              await getCurentAddress();
-              final dynamic checkingImage = await _openCamera();
-              if (checkingImage == null) {
-                createToste("take_image_order");
-                // showDialog(
-                //     context: context,
-                //     builder: (context) {
-                //       return AlertDialog(
-                //         title: Text('take_image_order'.tr()),
-                //         actions: <Widget>[
-                //           TextButton(
-                //               onPressed: () {
-                //                 Navigator.pop(context);
-                //                 // Navigator.pushReplacementNamed(context, '/nav');
-                //               },
-                //               child: Text('Okay_label'.tr()))
-                //         ],
-                //       );
-                //     });
+        onPressed: () {
+          // first thing we get the vriables from the cahce
+          getSharedPrefs().whenComplete(() async {
+            // check if the device that we work with is andriod or iphone
+            if (Platform.isAndroid) {
+              // if the last type is check in we can then break in else do nothing
+              if (lastType == 1 || lastType == 5) {
+                await getCurentAddress();
+                final dynamic checkingImage = await _openCamera();
+                if (checkingImage == null) {
+                  createToste("take_image_order");
+                } else {
+                  setState(() {
+                    type = 3;
+                    tdataB = DateTime.now();
+                  });
+
+                  SharedPreferences prefs =
+                      await SharedPreferences.getInstance();
+                  prefs.setString("startTimeB", tdataB.toString());
+                  start();
+
+                  await clockApi();
+                }
               } else {
+                return;
+              }
+            } else {
+              if (lastType == 1) {
+                await getCurentAddress();
                 setState(() {
                   type = 3;
                   tdataB = DateTime.now();
                 });
-
                 SharedPreferences prefs = await SharedPreferences.getInstance();
                 prefs.setString("startTimeB", tdataB.toString());
                 start();
 
                 await clockApi();
               }
-            } else {
-              return;
             }
-          } else {
-            if (lastType == 1) {
-              await getCurentAddress();
-              setState(() {
-                type = 3;
-                tdataB = DateTime.now();
-              });
-              SharedPreferences prefs = await SharedPreferences.getInstance();
-              prefs.setString("startTimeB", tdataB.toString());
-              start();
-
-              await clockApi();
-            }
-          }
+          });
         },
         style: ElevatedButton.styleFrom(
           fixedSize: const Size(240, 46),
@@ -365,32 +375,30 @@ class _BreakScreenState extends State<BreakScreen> {
     );
   }
 
+// the break out
   Widget _breakOut() {
     return Padding(
       padding: const EdgeInsets.only(top: 40),
       child: ElevatedButton(
-        onPressed: () async {
-          if (Platform.isAndroid) {
-            await getCurentAddress();
-            final dynamic checkingImage = await _openCamera();
-            if (checkingImage == null) {
-              createToste("take_image_order");
-              // showDialog(
-              //     context: context,
-              //     builder: (context) {
-              //       return AlertDialog(
-              //         title: Text('take_image_order'.tr()),
-              //         actions: <Widget>[
-              //           TextButton(
-              //               onPressed: () {
-              //                 Navigator.pop(context);
-              //                 // Navigator.pushReplacementNamed(context, '/nav');
-              //               },
-              //               child: Text('Okay_label'.tr()))
-              //         ],
-              //       );
-              //     });
+        onPressed: () {
+          getSharedPrefs().whenComplete(() async {
+            if (Platform.isAndroid) {
+              await getCurentAddress();
+              final dynamic checkingImage = await _openCamera();
+              if (checkingImage == null) {
+                createToste("take_image_order");
+              } else {
+                setState(() {
+                  type = 4;
+                  checkedIn = false;
+                  breakId = 4;
+                });
+                reset();
+
+                await clockApi();
+              }
             } else {
+              await getCurentAddress();
               setState(() {
                 type = 4;
                 checkedIn = false;
@@ -400,17 +408,7 @@ class _BreakScreenState extends State<BreakScreen> {
 
               await clockApi();
             }
-          } else {
-            await getCurentAddress();
-            setState(() {
-              type = 4;
-              checkedIn = false;
-              breakId = 4;
-            });
-            reset();
-
-            await clockApi();
-          }
+          });
         },
         style: ElevatedButton.styleFrom(
           primary: const Color(0xFF1C325E),

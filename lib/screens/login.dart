@@ -205,6 +205,7 @@ class _LoginState extends State<Login> {
       final decodedMap = json.decode(response.body);
       if (decodedMap['error'] == null) {
         SharedPreferences prefs = await SharedPreferences.getInstance();
+        print(decodedMap['userID']);
         prefs.setString("email", emailController.text);
         prefs.setString("password", passwordController.text);
         prefs.setString("userID", decodedMap['userID']);
@@ -222,7 +223,14 @@ class _LoginState extends State<Login> {
         );
       }
     } else {
-      print("error");
+      Fluttertoast.showToast(
+          msg: "Password or User name is not correct".tr(),
+          toastLength: Toast.LENGTH_LONG,
+          gravity: ToastGravity.BOTTOM,
+          timeInSecForIosWeb: 5,
+          backgroundColor: Colors.white,
+          textColor: Colors.black,
+          fontSize: 16.0);
     }
   }
 }

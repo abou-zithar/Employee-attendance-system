@@ -128,7 +128,16 @@ class _VecationLogScreenState extends State<VecationLogScreen> {
               child: Container(
                 child: ListView.builder(
                   itemBuilder: (context, index) {
-                    return createCard(data[index]);
+                    if (data["message"] == "no vacation made") {
+                      return Center(
+                          child: Text(data["message"],
+                              style: TextStyle(
+                                  color: Theme.of(context).primaryColor,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 40)));
+                    } else {
+                      return createCard(data[index]);
+                    }
                   },
                   itemCount: data.length,
                 ),
